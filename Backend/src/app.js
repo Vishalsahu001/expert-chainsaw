@@ -4,6 +4,8 @@ const cors = require("cors")
 
 const app = express()
 
+app.set('trust proxy', 1)
+
 app.use(express.json())
 app.use(cookieParser())
 const frontendUrl = process.env.FRONTEND_URL ? process.env.FRONTEND_URL.replace(/\/$/, "") : "http://localhost:5173"

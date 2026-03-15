@@ -16,7 +16,8 @@ export const useAuth = () => {
             const data = await login({ email, password })
             setUser(data.user)
         } catch (err) {
-
+            console.error("Login Error:", err)
+            alert(err?.response?.data?.message || "Login failed. Please check your credentials.")
         } finally {
             setLoading(false)
         }
@@ -28,7 +29,8 @@ export const useAuth = () => {
             const data = await register({ username, email, password })
             setUser(data.user)
         } catch (err) {
-
+            console.error("Register Error:", err)
+            alert(err?.response?.data?.message || "Registration failed.")
         } finally {
             setLoading(false)
         }
