@@ -1,12 +1,17 @@
-const { GoogleGenAI } = require("@google/genai")
+const { GoogleGenerativeAI } = require("@google/generative-ai")
 const { z } = require("zod")
 const { zodToJsonSchema } = require("zod-to-json-schema")
 const puppeteer = require("puppeteer")
 
 const getModel = () => {
     const apiKey = process.env.GOOGLE_GENAI_API_KEY;
-    if (!apiKey) throw new Error("GOOGLE_GENAI_API_KEY is not defined in environment");
-    const genAI = new GoogleGenAI(apiKey.trim());
+    console.log("Gemini API Key Check:", apiKey ? "Key Found (Length: " + apiKey.length + ")" : "Key Not Found");
+    
+    if (!apiKey) {
+        throw new Error("GOOGLE_GENAI_API_KEY is not defined in environment variables on Render");
+    }
+    
+    const genAI = new GoogleGenerativeAI(apiKey.trim());
     return genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 };
 
