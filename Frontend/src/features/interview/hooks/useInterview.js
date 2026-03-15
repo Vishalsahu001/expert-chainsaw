@@ -1,5 +1,5 @@
-import { getAllInterviewReports, generateInterviewReport, getInterviewReportById, generateResumePdf, analyzeResume, getResumeAnalysisById } from "../services/interview.api"
-import { useContext, useEffect, useState } from "react"
+import { getAllInterviewReports, generateInterviewReport, getInterviewReportById, generateResumePdf } from "../services/interview.api"
+import { useContext, useEffect } from "react"
 import { InterviewContext } from "../interview.context"
 import { useParams } from "react-router"
 
@@ -14,7 +14,6 @@ export const useInterview = () => {
     }
 
     const { loading, setLoading, report, setReport, reports, setReports } = context
-    const [ analysis, setAnalysis ] = useState(null)
 
     const generateReport = async ({ jobDescription, selfDescription, resumeFile }) => {
         setLoading(true)
@@ -79,35 +78,6 @@ export const useInterview = () => {
         }
     }
 
-    // --- ATS Resume Analysis Methods ---
-    const runResumeAnalysis = async ({ jobDescription, selfDescription, resumeFile }) => {
-        setLoading(true)
-        let response = null
-        try {
-            response = await analyzeResume({ jobDescription, selfDescription, resumeFile })
-            setAnalysis(response.analysisData)
-        } catch (error) {
-            console.log(error)
-        } finally {
-            setLoading(false)
-        }
-        return response?.analysisData
-    }
-
-    const getAnalysisById = async (analysisId) => {
-        setLoading(true)
-        let response = null
-        try {
-            response = await getResumeAnalysisById(analysisId)
-            setAnalysis(response.analysisData)
-        } catch (error) {
-            console.log(error)
-        } finally {
-            setLoading(false)
-        }
-        return response?.analysisData
-    }
-
     useEffect(() => {
         if (interviewId) {
             getReportById(interviewId)
@@ -116,6 +86,6 @@ export const useInterview = () => {
         }
     }, [ interviewId ])
 
-    return { loading, report, reports, analysis, generateReport, getReportById, getReports, getResumePdf, runResumeAnalysis, getAnalysisById }
+    return { loading, report, reports, generateReport, getReportById, getReports, getResumePdf }
 
 }
