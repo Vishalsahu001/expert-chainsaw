@@ -10,11 +10,13 @@ const getModel = () => {
     
     const genAI = new GoogleGenerativeAI(apiKey.trim());
     
-    // We choose the most stable production model name available.
-    // If Flash 1.5 is having endpoint issues, Gemini Pro is our reliable backup.
-    return genAI.getGenerativeModel({ 
-        model: "gemini-1.5-flash"
-    });
+    // Applying your suggested fixes:
+    // 1. Using 'v1beta' as it's the working endpoint for 1.5-flash
+    // 2. Using 'gemini-1.5-flash-latest' for the specific version
+    return genAI.getGenerativeModel(
+        { model: "gemini-1.5-flash-latest" },
+        { apiVersion: "v1beta" }
+    );
 };
 
 // ... keep interviewReportSchema for documentation/reference or helper ...
