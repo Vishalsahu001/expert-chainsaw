@@ -39,9 +39,24 @@ const interviewReportSchema = z.object({
     title: z.string().describe("The title of the job for which the interview report is generated"),
 })
 
+const cleanSchema = (schema) => {
+    if (typeof schema !== "object" || schema === null) return schema;
+    
+    const newSchema = Array.isArray(schema) ? [] : {};
+    for (const key in schema) {
+        // Remove fields that Gemini API does not support
+        if (key === "additionalProperties" || key === "$schema" || key === "default") continue;
+        
+        if (typeof schema[key] === "object") {
+            newSchema[key] = cleanSchema(schema[key]);
+        } else {
+            newSchema[key] = schema[key];
+        }
+    }
+    return newSchema;
+};
+
 async function generateInterviewReport({ resume, selfDescription, jobDescription }) {
-
-
     const prompt = `Generate an interview report for a candidate with the following details:
                         Resume: ${resume}
                         Self Description: ${selfDescription}
@@ -53,13 +68,11 @@ async function generateInterviewReport({ resume, selfDescription, jobDescription
         contents: [{ role: "user", parts: [{ text: prompt }] }],
         generationConfig: {
             responseMimeType: "application/json",
-            responseSchema: zodToJsonSchema(interviewReportSchema),
+            responseSchema: cleanSchema(zodToJsonSchema(interviewReportSchema)),
         }
     })
 
     return JSON.parse(result.response.text())
-
-
 }
 
 
@@ -109,7 +122,7 @@ async function generateResumePdf({ resume, selfDescription, jobDescription }) {
         contents: [{ role: "user", parts: [{ text: prompt }] }],
         generationConfig: {
             responseMimeType: "application/json",
-            responseSchema: zodToJsonSchema(resumePdfSchema),
+            responseSchema: cleanSchema(zodToJsonSchema(resumePdfSchema)),
         }
     })
 

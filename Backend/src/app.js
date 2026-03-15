@@ -25,15 +25,6 @@ const interviewRouter = require("./routes/interview.routes")
 app.use("/api/auth", authRouter)
 app.use("/api/interview", interviewRouter)
 
-app.get("/api/debug-env", (req, res) => {
-    res.json({
-        has_gemini_key: !!process.env.GOOGLE_GENAI_API_KEY,
-        key_length: process.env.GOOGLE_GENAI_API_KEY ? process.env.GOOGLE_GENAI_API_KEY.length : 0,
-        node_env: process.env.NODE_ENV,
-        mongo_status: mongoose.connection.readyState
-    })
-})
-
 // Global Error Handler
 app.use((err, req, res, next) => {
     console.error("Global Error Handler:", err)
