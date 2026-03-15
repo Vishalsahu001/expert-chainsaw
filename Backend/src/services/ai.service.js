@@ -10,8 +10,12 @@ const getModel = () => {
         throw new Error("VISH-AI-ERROR: GOOGLE_GENAI_API_KEY is missing or invalid in Render environment.");
     }
     
+    // Using v1beta to ensure structured output (schema) support is fully available
     const genAI = new GoogleGenerativeAI(apiKey.trim());
-    return genAI.getGenerativeModel({ model: "gemini-1.5-flash" }, { apiVersion: "v1" });
+    return genAI.getGenerativeModel(
+        { model: "gemini-1.5-flash" },
+        { apiVersion: "v1beta" }
+    );
 };
 
 
