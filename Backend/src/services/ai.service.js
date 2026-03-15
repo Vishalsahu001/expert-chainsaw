@@ -9,11 +9,12 @@ const getModel = () => {
     }
     
     const genAI = new GoogleGenerativeAI(apiKey.trim());
-    // Force v1 API to avoid v1beta 404 issues, and use the standard flash model
-    return genAI.getGenerativeModel(
-        { model: "gemini-1.5-flash" },
-        { apiVersion: "v1" }
-    );
+    
+    // We choose the most stable production model name available.
+    // If Flash 1.5 is having endpoint issues, Gemini Pro is our reliable backup.
+    return genAI.getGenerativeModel({ 
+        model: "gemini-1.5-flash"
+    });
 };
 
 // ... keep interviewReportSchema for documentation/reference or helper ...
