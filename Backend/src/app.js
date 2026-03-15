@@ -1,6 +1,7 @@
 const express = require("express")
 const cookieParser = require("cookie-parser")
 const cors = require("cors")
+const mongoose = require("mongoose")
 
 const app = express()
 
@@ -21,8 +22,29 @@ const interviewRouter = require("./routes/interview.routes")
 
 
 /* using all the routes here */
+app.get("/health", (req, res) => {
+    res.status(200).json({
+        status: "alive",
+        database: mongoose.connection.readyState === 1 ? "connected" : "disconnected",
+        env: {
+            FRONTEND_URL: !!process.env.FRONTEND_URL,
+            MONGO_URI: !!process.env.MONGO_URI,
+            JWT_SECRET: !!process.env.JWT_SECRET
+        }
+    })
+})
+
 app.use("/api/auth", authRouter)
 app.use("/api/interview", interviewRouter)
+
+// Global Error Handler
+app.use((err, req, res, next) => {
+    console.error("Global Error Handler:", err)
+    res.status(err.status || 500).json({
+        message: err.message || "Internal Server Error",
+        error: process.env.NODE_ENV === "development" ? err : {}
+    })
+})
 
 
 
