@@ -10,13 +10,6 @@ const interviewReportModel = require("../models/interviewReport.model")
  */
 async function generateInterViewReportController(req, res, next) {
     try {
-        if (!req.file) {
-            return res.status(400).json({
-                message: "Please upload a resume (PDF)."
-            })
-        }
-
-        const resumeContent = await pdfParse(req.file.buffer)
         const { selfDescription, jobDescription } = req.body
 
         if (!jobDescription) {
@@ -25,16 +18,28 @@ async function generateInterViewReportController(req, res, next) {
             })
         }
 
+        let resumeText = ""
+        if (req.file) {
+            const resumeContent = await pdfParse(req.file.buffer)
+            resumeText = resumeContent.text
+        }
+
+        if (!resumeText && !selfDescription) {
+            return res.status(400).json({
+                message: "Please provide either a resume (PDF) or a self-description."
+            })
+        }
+
         const interViewReportByAi = await generateInterviewReport({
-            resume: resumeContent.text,
-            selfDescription,
+            resume: resumeText,
+            selfDescription: selfDescription || "",
             jobDescription
         })
 
         const interviewReport = await interviewReportModel.create({
             user: req.user.id,
-            resume: resumeContent.text,
-            selfDescription,
+            resume: resumeText,
+            selfDescription: selfDescription || "",
             jobDescription,
             ...interViewReportByAi
         })

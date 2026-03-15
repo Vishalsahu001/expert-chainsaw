@@ -15,6 +15,16 @@ const Home = () => {
     const navigate = useNavigate()
 
     const handleGenerateReport = async () => {
+        if (!jobDescription.trim()) {
+            alert("Please provide a job description.")
+            return
+        }
+
+        if (!uploadedFile && !selfDescription.trim()) {
+            alert("Please upload a resume or provide a self-description.")
+            return
+        }
+
         const resumeFile = uploadedFile
         const data = await generateReport({ jobDescription, selfDescription, resumeFile })
         if (data?._id) navigate(`/interview/${data._id}`)
