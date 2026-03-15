@@ -22,18 +22,6 @@ const interviewRouter = require("./routes/interview.routes")
 
 
 /* using all the routes here */
-app.get("/health", (req, res) => {
-    res.status(200).json({
-        status: "alive",
-        database: mongoose.connection.readyState === 1 ? "connected" : "disconnected",
-        env: {
-            FRONTEND_URL: !!process.env.FRONTEND_URL,
-            MONGO_URI: !!process.env.MONGO_URI,
-            JWT_SECRET: !!process.env.JWT_SECRET
-        }
-    })
-})
-
 app.use("/api/auth", authRouter)
 app.use("/api/interview", interviewRouter)
 
