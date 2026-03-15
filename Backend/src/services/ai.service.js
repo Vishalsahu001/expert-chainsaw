@@ -11,7 +11,7 @@ const getModel = () => {
     }
     
     const genAI = new GoogleGenerativeAI(apiKey.trim());
-    return genAI.getGenerativeModel({ model: "gemini-1.5-flash-latest" });
+    return genAI.getGenerativeModel({ model: "gemini-1.5-flash" }, { apiVersion: "v1" });
 };
 
 
