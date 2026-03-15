@@ -5,10 +5,9 @@ const puppeteer = require("puppeteer")
 
 const getModel = () => {
     const apiKey = process.env.GOOGLE_GENAI_API_KEY;
-    console.log("Gemini API Key Check:", apiKey ? "Key Found (Length: " + apiKey.length + ")" : "Key Not Found");
     
-    if (!apiKey) {
-        throw new Error("GOOGLE_GENAI_API_KEY is not defined in environment variables on Render");
+    if (!apiKey || apiKey.length < 10) {
+        throw new Error("VISH-AI-ERROR: GOOGLE_GENAI_API_KEY is missing or invalid in Render environment.");
     }
     
     const genAI = new GoogleGenerativeAI(apiKey.trim());
@@ -66,7 +65,9 @@ async function generateInterviewReport({ resume, selfDescription, jobDescription
 
 
 async function generatePdfFromHtml(htmlContent) {
-    const browser = await puppeteer.launch()
+    const browser = await puppeteer.launch({
+        args: ["--no-sandbox", "--disable-setuid-sandbox"]
+    })
     const page = await browser.newPage();
     await page.setContent(htmlContent, { waitUntil: "networkidle0" })
 
