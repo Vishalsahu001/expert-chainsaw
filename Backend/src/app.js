@@ -40,13 +40,25 @@ app.get("/api/debug-models", async (req, res) => {
     try {
         const { GoogleGenerativeAI } = require("@google/generative-ai");
         const genAI = new GoogleGenerativeAI(process.env.GOOGLE_GENAI_API_KEY);
-        // We'll try to list models to see what the actual names/versions are
+        
+        // Use the v1 API to list models
+        const models = await genAI.getGenerativeModel({ model: "gemini-pro" }, { apiVersion: "v1" }).listModels();
+        
         res.json({ 
-            message: "Check server logs for full model list",
-            hint: "If this fails, the API key is likely the issue."
+            availableModels: models.models.map(m => ({
+                name: m.name,
+                version: m.version,
+                displayName: m.displayName,
+                supportedMethods: m.supportedGenerationMethods
+            }))
         });
     } catch (err) {
-        res.status(500).json({ error: err.message });
+        console.error("DEBUG-MODELS-ERROR:", err);
+        res.status(500).json({ 
+            error: err.message,
+            stack: err.stack,
+            hint: "This usually means the API key is restricted or the method listModels is not in this SDK version."
+        });
     }
 })
 
