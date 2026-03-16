@@ -42,7 +42,7 @@ async function generateInterviewReport({ resume, selfDescription, jobDescription
                         Do not include any other text or markdown formatting (like \`\`\`json). Just the raw JSON object.`
 
     // Only trying stable, proven model names on the V1 endpoint
-    const modelsToTry = ["gemini-1.5-flash", "gemini-1.0-pro"];
+    const modelsToTry = ["gemini-1.5-flash-latest", "gemini-1.5-flash", "gemini-1.5-pro", "gemini-1.0-pro"];
     let lastError = null;
 
     for (const modelName of modelsToTry) {
@@ -86,7 +86,7 @@ async function generatePdfFromHtml(htmlContent) {
 async function generateResumePdf({ resume, selfDescription, jobDescription }) {
     const prompt = `Generate a professional resume in HTML. Resume: ${resume} Job: ${jobDescription}. Return ONLY JSON: {"html": "..."}`
 
-    const modelsToTry = ["gemini-1.5-flash", "gemini-1.0-pro"];
+    const modelsToTry = ["gemini-1.5-flash-latest", "gemini-1.5-flash", "gemini-1.5-pro", "gemini-1.0-pro"];
     let lastError = null;
 
     for (const modelName of modelsToTry) {
