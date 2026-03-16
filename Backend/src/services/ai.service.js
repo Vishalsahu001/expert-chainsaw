@@ -10,17 +10,13 @@ const getModel = (modelName) => {
     
     const genAI = new GoogleGenerativeAI(apiKey.trim());
     
-    // THE 404 FIX: 
-    // - 1.5 models (Flash) perform best on 'v1beta'
-    // - 1.0/Pro models are stable on 'v1'
-    const useBeta = modelName.includes("1.5");
-    const apiVersion = useBeta ? "v1beta" : "v1";
-
-    console.log(`VISH-AI-STRATEGY: Using ${modelName} on API version ${apiVersion}`);
+    // THE ULTIMATE 404 FIX:
+    // Using v1beta for next-gen models (2.5, 2.0, 3.0) as verified in diagnostics.
+    console.log(`VISH-AI-NEXT-GEN: Initializing ${modelName} on v1beta`);
     
     return genAI.getGenerativeModel(
         { model: modelName },
-        { apiVersion }
+        { apiVersion: "v1beta" }
     );
 };
 
@@ -41,13 +37,15 @@ async function generateInterviewReport({ resume, selfDescription, jobDescription
                         }
                         Do not include any other text or markdown formatting (like \`\`\`json). Just the raw JSON object.`
 
-    // Only trying stable, proven model names on the V1 endpoint
-    const modelsToTry = ["gemini-1.5-flash-latest", "gemini-1.5-flash", "gemini-1.5-pro", "gemini-1.0-pro"];
+    // Tier 1: Gemini 2.5 Flash (Most stable in diagnostics)
+    // Tier 2: Gemini 2.0 Flash 
+    // Tier 3: Gemini 3 Flash Preview
+    const modelsToTry = ["gemini-2.5-flash", "gemini-2.0-flash", "gemini-3-flash-preview"];
     let lastError = null;
 
     for (const modelName of modelsToTry) {
         try {
-            console.log(`VISH-AI-TRY: Attempting ${modelName}...`);
+            console.log(`VISH-AI-TRY: Attempting next-gen ${modelName}...`);
             const model = getModel(modelName);
             const result = await model.generateContent(prompt);
             const responseText = result.response.text().replace(/```json/g, "").replace(/```/g, "").trim();
@@ -55,12 +53,12 @@ async function generateInterviewReport({ resume, selfDescription, jobDescription
             console.log(`VISH-AI-SUCCESS: Response received from ${modelName}`);
             return parsed;
         } catch (error) {
-            console.error(`VISH-AI-FAIL: ${modelName} turned back error:`, error.message);
+            console.error(`VISH-AI-FAIL: ${modelName} error:`, error.message);
             lastError = error;
         }
     }
 
-    throw lastError || new Error("AI service could not connect. Please check your Render environment variables.");
+    throw lastError || new Error("Next-Gen AI models failed to respond. Please check your Render logs.");
 }
 
 async function generatePdfFromHtml(htmlContent) {
@@ -86,17 +84,18 @@ async function generatePdfFromHtml(htmlContent) {
 async function generateResumePdf({ resume, selfDescription, jobDescription }) {
     const prompt = `Generate a professional resume in HTML. Resume: ${resume} Job: ${jobDescription}. Return ONLY JSON: {"html": "..."}`
 
-    const modelsToTry = ["gemini-1.5-flash-latest", "gemini-1.5-flash", "gemini-1.5-pro", "gemini-1.0-pro"];
+    const modelsToTry = ["gemini-2.5-flash", "gemini-2.0-flash", "gemini-3-flash-preview"];
     let lastError = null;
 
     for (const modelName of modelsToTry) {
         try {
-            console.log(`VISH-AI-TRY-PDF: Attempting ${modelName}...`);
+            console.log(`VISH-AI-TRY-PDF: Attempting next-gen ${modelName}...`);
             const model = getModel(modelName);
             const result = await model.generateContent(prompt);
             const responseText = result.response.text().replace(/```json/g, "").replace(/```/g, "").trim();
             const jsonContent = JSON.parse(responseText);
             const pdfBuffer = await generatePdfFromHtml(jsonContent.html);
+            console.log(`VISH-AI-SUCCESS-PDF: Generated using ${modelName}`);
             return pdfBuffer;
         } catch (error) {
             console.error(`VISH-AI-FAIL-PDF: ${modelName} error:`, error.message);
@@ -104,7 +103,7 @@ async function generateResumePdf({ resume, selfDescription, jobDescription }) {
         }
     }
 
-    throw lastError || new Error("PDF Generation Failed.");
+    throw lastError || new Error("Next-Gen PDF Generation Failed.");
 }
 
 module.exports = { generateInterviewReport, generateResumePdf }
