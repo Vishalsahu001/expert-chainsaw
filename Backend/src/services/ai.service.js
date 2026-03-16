@@ -1,7 +1,7 @@
 const { GoogleGenerativeAI } = require("@google/generative-ai")
 const puppeteer = require("puppeteer")
 
-const getModel = (modelName = "gemini-1.5-flash-latest") => {
+const getModel = (modelName) => {
     const apiKey = process.env.GOOGLE_GENAI_API_KEY;
     
     if (!apiKey || apiKey.length < 10) {
@@ -10,10 +10,17 @@ const getModel = (modelName = "gemini-1.5-flash-latest") => {
     
     const genAI = new GoogleGenerativeAI(apiKey.trim());
     
-    // We try to use the most compatible version available
+    // Auto-detect correct API version:
+    // 1.5 versions living on v1beta often support more advanced features
+    // standard or fallback models use v1
+    const useBeta = modelName.includes("1.5") || modelName.includes("flash");
+    const apiVersion = useBeta ? "v1beta" : "v1";
+
+    console.log(`VISH-AI-SMART-INIT: Initializing ${modelName} with API version ${apiVersion}`);
+    
     return genAI.getGenerativeModel(
         { model: modelName },
-        { apiVersion: "v1beta" }
+        { apiVersion }
     );
 };
 
@@ -34,7 +41,7 @@ async function generateInterviewReport({ resume, selfDescription, jobDescription
                         }
                         Do not include any other text or markdown formatting (like \`\`\`json). Just the raw JSON object.`
 
-    const modelsToTry = ["gemini-1.5-flash-latest", "gemini-1.5-flash", "gemini-pro"];
+    const modelsToTry = ["gemini-1.5-flash", "gemini-1.5-pro", "gemini-1.0-pro", "gemini-pro"];
     let lastError = null;
 
     for (const modelName of modelsToTry) {
@@ -87,7 +94,7 @@ async function generateResumePdf({ resume, selfDescription, jobDescription }) {
                         }
                         Do not include any other text or markdown formatting (like \`\`\`json). Just the raw JSON object.`
 
-    const modelsToTry = ["gemini-1.5-flash-latest", "gemini-1.5-flash", "gemini-pro"];
+    const modelsToTry = ["gemini-1.5-flash", "gemini-1.5-pro", "gemini-1.0-pro", "gemini-pro"];
     let lastError = null;
 
     for (const modelName of modelsToTry) {
