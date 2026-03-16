@@ -29,7 +29,7 @@ app.use("/api/interview", interviewRouter)
 app.get("/api/health", (req, res) => {
     res.json({
         status: "alive",
-        version: "VISH-AI-V8-NEXT-GEN-AI",
+        version: "VISH-AI-V9-VALIDATION-FIX",
         db: mongoose.connection.readyState === 1 ? "connected" : "disconnected",
         timestamp: new Date().toISOString()
     })
