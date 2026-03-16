@@ -10,12 +10,17 @@ const getModel = (modelName) => {
     
     const genAI = new GoogleGenerativeAI(apiKey.trim());
     
-    // FORCING STABLE V1 FOR ALL MODELS TO PREVENT 404
-    console.log(`VISH-AI-STABLE-INIT: Using model ${modelName} on V1 Stable`);
+    // THE 404 FIX: 
+    // - 1.5 models (Flash) perform best on 'v1beta'
+    // - 1.0/Pro models are stable on 'v1'
+    const useBeta = modelName.includes("1.5");
+    const apiVersion = useBeta ? "v1beta" : "v1";
+
+    console.log(`VISH-AI-STRATEGY: Using ${modelName} on API version ${apiVersion}`);
     
     return genAI.getGenerativeModel(
         { model: modelName },
-        { apiVersion: "v1" }
+        { apiVersion }
     );
 };
 
