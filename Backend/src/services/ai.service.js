@@ -10,17 +10,12 @@ const getModel = (modelName) => {
     
     const genAI = new GoogleGenerativeAI(apiKey.trim());
     
-    // Auto-detect correct API version:
-    // 1.5 versions living on v1beta often support more advanced features
-    // standard or fallback models use v1
-    const useBeta = modelName.includes("1.5") || modelName.includes("flash");
-    const apiVersion = useBeta ? "v1beta" : "v1";
-
-    console.log(`VISH-AI-SMART-INIT: Initializing ${modelName} with API version ${apiVersion}`);
+    // FORCING STABLE V1 FOR ALL MODELS TO PREVENT 404
+    console.log(`VISH-AI-STABLE-INIT: Using model ${modelName} on V1 Stable`);
     
     return genAI.getGenerativeModel(
         { model: modelName },
-        { apiVersion }
+        { apiVersion: "v1" }
     );
 };
 
@@ -41,25 +36,26 @@ async function generateInterviewReport({ resume, selfDescription, jobDescription
                         }
                         Do not include any other text or markdown formatting (like \`\`\`json). Just the raw JSON object.`
 
-    const modelsToTry = ["gemini-1.5-flash", "gemini-1.5-pro", "gemini-1.0-pro", "gemini-pro"];
+    // Only trying stable, proven model names on the V1 endpoint
+    const modelsToTry = ["gemini-1.5-flash", "gemini-1.0-pro"];
     let lastError = null;
 
     for (const modelName of modelsToTry) {
         try {
-            console.log(`VISH-AI-SMART-TRY: Attempting report with ${modelName}...`);
+            console.log(`VISH-AI-TRY: Attempting ${modelName}...`);
             const model = getModel(modelName);
             const result = await model.generateContent(prompt);
             const responseText = result.response.text().replace(/```json/g, "").replace(/```/g, "").trim();
             const parsed = JSON.parse(responseText);
-            console.log(`VISH-AI-SMART-TRY: Success with ${modelName}!`);
+            console.log(`VISH-AI-SUCCESS: Response received from ${modelName}`);
             return parsed;
         } catch (error) {
-            console.error(`VISH-AI-SMART-TRY: Failed with ${modelName}:`, error.message);
+            console.error(`VISH-AI-FAIL: ${modelName} turned back error:`, error.message);
             lastError = error;
         }
     }
 
-    throw lastError || new Error("All AI models failed to respond. Please check your API key.");
+    throw lastError || new Error("AI service could not connect. Please check your Render environment variables.");
 }
 
 async function generatePdfFromHtml(htmlContent) {
@@ -83,37 +79,27 @@ async function generatePdfFromHtml(htmlContent) {
 }
 
 async function generateResumePdf({ resume, selfDescription, jobDescription }) {
-    const prompt = `Generate a professional, ATS-friendly resume in HTML format.
-                        Resume context: ${resume}
-                        Self Description: ${selfDescription}
-                        Job Description to target: ${jobDescription}
-                        
-                        Return ONLY a JSON object with this exact field:
-                        {
-                          "html": "The full HTML code for the resume (professional styling included)"
-                        }
-                        Do not include any other text or markdown formatting (like \`\`\`json). Just the raw JSON object.`
+    const prompt = `Generate a professional resume in HTML. Resume: ${resume} Job: ${jobDescription}. Return ONLY JSON: {"html": "..."}`
 
-    const modelsToTry = ["gemini-1.5-flash", "gemini-1.5-pro", "gemini-1.0-pro", "gemini-pro"];
+    const modelsToTry = ["gemini-1.5-flash", "gemini-1.0-pro"];
     let lastError = null;
 
     for (const modelName of modelsToTry) {
         try {
-            console.log(`VISH-AI-SMART-TRY: Attempting resume with ${modelName}...`);
+            console.log(`VISH-AI-TRY-PDF: Attempting ${modelName}...`);
             const model = getModel(modelName);
             const result = await model.generateContent(prompt);
             const responseText = result.response.text().replace(/```json/g, "").replace(/```/g, "").trim();
             const jsonContent = JSON.parse(responseText);
             const pdfBuffer = await generatePdfFromHtml(jsonContent.html);
-            console.log(`VISH-AI-SMART-TRY: Success with ${modelName}!`);
             return pdfBuffer;
         } catch (error) {
-            console.error(`VISH-AI-SMART-TRY: Failed with ${modelName}:`, error.message);
+            console.error(`VISH-AI-FAIL-PDF: ${modelName} error:`, error.message);
             lastError = error;
         }
     }
 
-    throw lastError || new Error("All AI models failed to generate PDF. Please try again.");
+    throw lastError || new Error("PDF Generation Failed.");
 }
 
 module.exports = { generateInterviewReport, generateResumePdf }
