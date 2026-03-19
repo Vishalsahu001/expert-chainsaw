@@ -4,18 +4,54 @@
   align-items: center;
   justify-content: center;
   min-height: 100vh;
-  background-color: #161616;
-  font-family: system-ui, -apple-system, sans-serif;
-  color: whitesmoke;
+  background-color: transparent; // Let global mesh show
+  font-family: 'Inter', sans-serif;
+  color: #e6edf3;
   perspective: 1000px;
   overflow: hidden;
+  position: relative;
+
+  .background-glows {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    overflow: hidden;
+
+    .glow {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(80px);
+      opacity: 0.15;
+      
+      &--1 {
+        top: 20%;
+        left: 20%;
+        width: 300px;
+        height: 300px;
+        background: #ff2d78;
+        animation: floatAura 10s infinite alternate;
+      }
+      
+      &--2 {
+        bottom: 20%;
+        right: 20%;
+        width: 400px;
+        height: 400px;
+        background: #4169e1;
+        animation: floatAura 12s infinite alternate-reverse;
+      }
+    }
+  }
 
   /* The 3D Scene */
   .scene {
-    width: 120px;
-    height: 120px;
+    width: 140px;
+    height: 140px;
     perspective: 800px;
-    margin-bottom: 3rem;
+    margin-bottom: 4rem;
   }
 
   /* The Rotating Cube */
@@ -24,61 +60,63 @@
     height: 100%;
     position: relative;
     transform-style: preserve-3d;
-    animation: rotateCube 6s infinite linear;
+    animation: rotateCube 12s infinite linear;
     
     &__face {
       position: absolute;
-      width: 120px;
-      height: 120px;
-      background: rgba(210, 13, 59, 0.1);
-      border: 2px solid #d20d3b;
+      width: 140px;
+      height: 140px;
+      background: rgba(255, 45, 120, 0.05);
+      border: 1px solid rgba(255, 45, 120, 0.4);
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 2rem;
-      font-weight: bold;
-      color: #d20d3b;
-      box-shadow: 0 0 20px rgba(210, 13, 59, 0.3) inset;
-      backdrop-filter: blur(2px);
+      font-size: 2.5rem;
+      font-family: 'Outfit', sans-serif;
+      font-weight: 700;
+      color: #ff2d78;
+      box-shadow: 0 0 30px rgba(255, 45, 120, 0.2) inset;
+      backdrop-filter: blur(4px);
 
-      &--front  { transform: rotateY(  0deg) translateZ(60px); }
-      &--right  { transform: rotateY( 90deg) translateZ(60px); }
-      &--back   { transform: rotateY(180deg) translateZ(60px); }
-      &--left   { transform: rotateY(-90deg) translateZ(60px); }
-      &--top    { transform: rotateX( 90deg) translateZ(60px); }
-      &--bottom { transform: rotateX(-90deg) translateZ(60px); }
+      &--front  { transform: rotateY(  0deg) translateZ(70px); }
+      &--right  { transform: rotateY( 90deg) translateZ(70px); }
+      &--back   { transform: rotateY(180deg) translateZ(70px); }
+      &--left   { transform: rotateY(-90deg) translateZ(70px); }
+      &--top    { transform: rotateX( 90deg) translateZ(70px); }
+      &--bottom { transform: rotateX(-90deg) translateZ(70px); }
     }
   }
 
   /* Typography */
   .loading-content {
     text-align: center;
-    max-width: 500px;
+    max-width: 600px;
     z-index: 10;
   }
 
   .loading-text {
-    font-size: 2.2rem;
+    font-size: 2.5rem;
+    font-family: 'Outfit', sans-serif;
     font-weight: 700;
-    margin-bottom: 0.5rem;
-    animation: pulseText 2s infinite alternate;
+    margin-bottom: 1rem;
+    letter-spacing: -0.02em;
   }
 
   .loading-subtext {
-    font-size: 1.1rem;
-    color: #888;
-    margin-bottom: 2rem;
-    animation: fadeIn 1s ease-out forwards;
-    animation-delay: 0.5s;
-    opacity: 0;
+    font-size: 1.2rem;
+    color: rgba(230, 237, 243, 0.6);
+    margin-bottom: 2.5rem;
+    line-height: 1.6;
   }
 
   /* Infinite Progress Bar */
   .progress-bar-container {
     width: 100%;
+    max-width: 320px;
+    margin: 0 auto;
     height: 4px;
-    background-color: rgba(255, 255, 255, 0.1);
-    border-radius: 4px;
+    background-color: rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
     overflow: hidden;
     position: relative;
   }
@@ -87,29 +125,25 @@
     position: absolute;
     top: 0;
     left: -50%;
-    width: 50%;
+    width: 60%;
     height: 100%;
-    background: linear-gradient(90deg, transparent, #d20d3b, transparent);
-    animation: slideProgress 2s infinite ease-in-out;
+    background: linear-gradient(90deg, transparent, #ff2d78, transparent);
+    animation: slideProgress 1.5s infinite cubic-bezier(0.65, 0, 0.35, 1);
   }
 }
 
 /* Animations */
 @keyframes rotateCube {
   0%   { transform: rotateX(0deg) rotateY(0deg) }
-  100% { transform: rotateX(360deg) rotateY(360deg) }
+  100% { transform: rotateX(360deg) rotateY(720deg) }
 }
 
-@keyframes pulseText {
-  0% { opacity: 0.8; transform: scale(0.98); }
-  100% { opacity: 1; transform: scale(1); text-shadow: 0 0 10px rgba(210, 13, 59, 0.4); }
-}
-
-@keyframes fadeIn {
-  to { opacity: 1; }
+@keyframes floatAura {
+  from { transform: translate(0, 0) scale(1.0); }
+  to { transform: translate(10%, 10%) scale(1.2); }
 }
 
 @keyframes slideProgress {
-  0% { left: -50%; }
+  0% { left: -60%; }
   100% { left: 100%; }
 }

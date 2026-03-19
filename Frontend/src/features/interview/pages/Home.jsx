@@ -41,6 +41,11 @@ const Home = () => {
 
     return (
         <div className='home-page'>
+            <div className="background-glows">
+                <div className="glow glow--1"></div>
+                <div className="glow glow--2"></div>
+                <div className="glow glow--3"></div>
+            </div>
 
             {/* Page Header */}
             <header className='page-header'>

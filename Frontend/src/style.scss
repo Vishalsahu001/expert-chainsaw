@@ -1,8 +1,14 @@
 @use "./style/button.scss";
 
+// Load Google Fonts
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap');
+
+$font-heading: 'Outfit', sans-serif;
+$font-body: 'Inter', sans-serif;
+
 * {
-    margin: 0%;
-    padding: 0%;
+    margin: 0;
+    padding: 0;
     box-sizing: border-box;
 }
 
@@ -10,11 +16,56 @@ html,
 body,
 #root {
     width: 100%;
-    background-color: #161616;
-    color: whitesmoke;
-    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    min-height: 100vh;
+    background-color: #03060a;
+    color: #e6edf3;
+    font-family: $font-body;
+    overflow-x: hidden;
 }
 
-.highlight{
-    color: #d20d3b;
+// ── Premium Background Mesh ──────────────────────────────────────────────────
+body {
+    position: relative;
+    &::before {
+        content: "";
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: 
+            radial-gradient(circle at 15% 15%, rgba(65, 105, 225, 0.1) 0%, transparent 40%),
+            radial-gradient(circle at 85% 20%, rgba(255, 45, 120, 0.08) 0%, transparent 40%),
+            radial-gradient(circle at 50% 50%, rgba(30, 40, 60, 0.15) 0%, transparent 60%),
+            radial-gradient(circle at 80% 80%, rgba(65, 105, 225, 0.08) 0%, transparent 40%),
+            radial-gradient(circle at 20% 85%, rgba(255, 45, 120, 0.08) 0%, transparent 40%);
+        z-index: -1;
+        pointer-events: none;
+    }
+
+    &::after {
+        content: "";
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+        opacity: 0.04;
+        z-index: -1;
+        pointer-events: none;
+    }
+}
+
+.highlight {
+    color: #ff2d78;
+    background: linear-gradient(135deg, #ff2d78 0%, #ff6b9d 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-weight: 600;
+}
+
+h1, h2, h3, h4, .outfit-font {
+    font-family: $font-heading;
 }

@@ -10,10 +10,9 @@ Interview AI is a high-end MERN stack application designed to help job seekers p
 - **Personalized Interview Strategy**: Generates a custom plan based on your unique profile and the target role.
 - **AI-Powered Question Generation**: Produces a curated list of Technical and Behavioral questions you are likely to face.
 - **Skill Gap Analysis**: Identifies exactly where your profile falls short compared to the job description and suggests ways to improve.
-- **Day-Wise Preparation Plan**: Provides a structured, actionable roadmap to get you interview-ready.
-- **Dynamic Resume Upload**: Interactive drag-and-drop resume uploader with instant feedback.
-- **Premium UI/UX**: A state-of-the-art dashboard featuring glassmorphism, smooth animations, and a modern dark-themed aesthetic.
+- **Premium UI/UX**: A state-of-the-art dashboard featuring **glassmorphism**, dynamic **mesh gradients**, and smooth **scramble animations** (EncryptedText).
 - **History Tracking**: Keeps a record of all your generated strategy plans for easy retrieval.
+- **Glassmorphic Aesthetic**: Modern high-end UI inspired by cutting-edge SaaS design.
 
 ---
 

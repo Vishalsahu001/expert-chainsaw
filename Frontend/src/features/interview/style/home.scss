@@ -12,7 +12,8 @@ $badge-required: #ff2d78;
 $badge-best:     #ff2d78;
 $info-bg:        #1b2a4a;
 $info-border:    #2d4a7a;
-$font-stack:     system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+$font-stack:     'Inter', system-ui, -apple-system, sans-serif;
+$font-heading:   'Outfit', sans-serif;
 
 // ── Page Shell ───────────────────────────────────────────────────────────────
 .home-page {
@@ -26,8 +27,61 @@ $font-stack:     system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Robot
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 3rem 1.5rem;
-    gap: 2rem;
+    padding: 5rem 1.5rem;
+    gap: 3rem;
+    background: transparent; // Let the global background show through
+    position: relative;
+    overflow: hidden;
+
+    .background-glows {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: -1;
+        pointer-events: none;
+
+        .glow {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(100px);
+            opacity: 0.12;
+
+            &--1 {
+                top: -10%;
+                left: -10%;
+                width: 500px;
+                height: 500px;
+                background: $accent;
+                animation: floatGlow 15s infinite alternate;
+            }
+
+            &--2 {
+                bottom: 10%;
+                right: -5%;
+                width: 600px;
+                height: 600px;
+                background: #4169e1;
+                animation: floatGlow 20s infinite alternate-reverse;
+            }
+
+            &--3 {
+                top: 40%;
+                right: 20%;
+                width: 300px;
+                height: 300px;
+                background: $accent;
+                opacity: 0.08;
+                animation: floatGlow 12s infinite alternate;
+            }
+        }
+    }
+}
+
+@keyframes floatGlow {
+    from { transform: translate(0, 0) scale(1); }
+    to { transform: translate(5%, 5%) scale(1.1); }
 }
 
 // ── Page Header ──────────────────────────────────────────────────────────────
@@ -35,10 +89,13 @@ $font-stack:     system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Robot
     text-align: center;
 
     h1 {
-        font-size: 2.25rem;
+        font-family: $font-heading;
+        font-size: 3.5rem;
         font-weight: 700;
-        margin-bottom: 0.5rem;
+        margin-bottom: 1rem;
         color: $text-primary;
+        letter-spacing: -0.03em;
+        line-height: 1.1;
     }
 
     p {
@@ -57,15 +114,18 @@ $font-stack:     system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Robot
 // ── Main Card ─────────────────────────────────────────────────────────────────
 .interview-card {
     width: 100%;
-    max-width: 900px;
-    background-color: $bg-card;
-    border: 1px solid $border-color;
-    border-radius: 1rem;
+    max-width: 960px;
+    background: rgba(22, 27, 34, 0.4);
+    backdrop-filter: blur(16px) saturate(180%);
+    -webkit-backdrop-filter: blur(16px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 1.5rem;
     overflow: hidden;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
 
     &__body {
         display: flex;
-        min-height: 520px;
+        min-height: 560px;
     }
 
     &__footer {
@@ -119,29 +179,31 @@ $font-stack:     system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Robot
     &__textarea {
         flex: 1;
         width: 100%;
-        background-color: $bg-input;
-        border: 1px solid $border-color;
-        border-radius: 0.5rem;
-        padding: 0.75rem 1rem;
+        background: rgba(30, 37, 53, 0.4);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 0.75rem;
+        padding: 1rem;
         color: $text-primary;
         font-family: $font-stack;
-        font-size: 0.875rem;
+        font-size: 0.95rem;
         resize: none;
         outline: none;
-        transition: border-color 0.2s;
-        line-height: 1.5;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        line-height: 1.6;
 
         &::placeholder {
-            color: $text-muted;
+            color: rgba($text-muted, 0.6);
         }
 
         &:focus {
             border-color: $accent;
+            background: rgba(30, 37, 53, 0.6);
+            box-shadow: 0 0 0 4px rgba($accent, 0.1);
         }
 
         &--short {
             flex: unset;
-            height: 96px;
+            height: 120px;
         }
     }
 
